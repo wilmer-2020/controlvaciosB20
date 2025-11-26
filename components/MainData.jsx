@@ -1,21 +1,26 @@
+"use client"
 import { Box } from "@mui/material";
 import FormAdd from "./FormAdd";
 import DataTable from "./DataTable";
-import { prisma } from "@/libs/prisma";
+import { useEffect, useState } from "react";
 
 // 🚨 OBLIGATORIO: Esto fuerza a que se consulten datos nuevos siempre
 export const dynamic = 'force-dynamic';
 
-const MainData = async () => {
-  const GetData = async () => {
-    // No hace falta try/catch complejo aquí, Next.js maneja errores de servidor
-    const data = await prisma.furgon.findMany({
-        orderBy: { createdAt: 'desc' } // Ordenar por más reciente
-    });
-    return data;
-  }
-  
-  const data = await GetData();
+const MainData = () => {
+
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+        const GetData = async () => {
+          // No hace falta try/catch complejo aquí, Next.js maneja errores de servidor
+          const res = await fetch('/api/furgones')
+          const data = await res.json()
+          setData(data)
+        }
+    GetData()
+    }, [])
+    
 
   return (
     <Box 

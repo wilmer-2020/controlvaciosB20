@@ -18,7 +18,7 @@ import Chips from "./Chips";
 
 const ROWS_PER_PAGE = 5;
 
-const DataTable = ({ Data = [] }) => {
+const DataTable = ({ Data }) => {
 
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
