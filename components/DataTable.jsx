@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useMemo} from "react";
+import { useState, useMemo } from "react"; // 1. Quitamos useEffect
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
   Chip, IconButton, Tooltip, Box, Select, MenuItem, FormControl, InputLabel,
-  TextField, TablePagination,InputAdornment
+  TextField, TablePagination, InputAdornment
 } from "@mui/material";
 
 import { FaEdit, FaSearch } from "react-icons/fa";
@@ -18,14 +18,14 @@ import Chips from "./Chips";
 
 const ROWS_PER_PAGE = 5;
 
-const DataTable = ({ Data = []}) => {
+const DataTable = ({ Data = [] }) => {
 
-  const router = useRouter();   
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterEstado, setFilterEstado] = useState('todos');
   const [page, setPage] = useState(0);
 
-  // 🔵 FILTRADO REAL USANDO SOLO LA PROP "Data"
+  // 🔵 FILTRADO REAL
   const filteredData = useMemo(() => {
     let list = [...Data];
 
@@ -48,9 +48,6 @@ const DataTable = ({ Data = []}) => {
     return filteredData.slice(start, start + ROWS_PER_PAGE);
   }, [filteredData, page]);
 
-  // Reiniciar página cuando los filtros cambien
-  
-
   return (
     <TableContainer component={Paper} elevation={3} sx={{ mt: 0, width: '100%' }}>
       
@@ -61,7 +58,11 @@ const DataTable = ({ Data = []}) => {
           label="Buscar por Placa"
           size="small"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          // ✅ CORRECCIÓN 1: Reseteamos la página aquí mismo
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setPage(0); 
+          }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -76,7 +77,11 @@ const DataTable = ({ Data = []}) => {
           <Select
             value={filterEstado}
             label="Estado"
-            onChange={(e) => setFilterEstado(e.target.value)}
+            // ✅ CORRECCIÓN 2: Reseteamos la página aquí mismo
+            onChange={(e) => {
+              setFilterEstado(e.target.value);
+              setPage(0);
+            }}
           >
             <MenuItem value="todos">Todos</MenuItem>
             <MenuItem value="buena">Buena</MenuItem>
@@ -85,12 +90,12 @@ const DataTable = ({ Data = []}) => {
         </FormControl>
 
         <Box
-        width={'100%'}
-        margin={"auto"}
-        padding={'5px'}
-        display={{xs:"flex",sm:"flex",md:"none"}}
+          width={'100%'}
+          margin={"auto"}
+          padding={'5px'}
+          display={{xs:"flex", sm:"flex", md:"none"}}
         >
-        <Chips/>
+          <Chips/>
         </Box>
 
       </Box>
