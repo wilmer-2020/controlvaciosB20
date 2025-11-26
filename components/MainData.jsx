@@ -24,7 +24,7 @@ const MainData = () => {
 
   return (
     <Box 
-      width={'90%'} margin={'auto'} display={'flex'} marginTop={'10px'}
+      width={'95%'} margin={'auto'} display={'flex'} marginTop={'10px'}
       flexDirection={{ xs: 'column', sm: 'column', md: 'row' }}
       gap={{ xs: '10px', sm: '10px', md: '20px' }}
       padding={{ xs: '5px', sm: '10px', md: '10px' }}

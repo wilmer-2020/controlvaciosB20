@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, useMemo } from "react"; // 1. Quitamos useEffect
+import { useState, useMemo } from "react";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
   Chip, IconButton, Tooltip, Box, Select, MenuItem, FormControl, InputLabel,
   TextField, TablePagination, InputAdornment
 } from "@mui/material";
 
-import { FaEdit, FaSearch } from "react-icons/fa";
+// 1. IMPORTAMOS EL ICONO DE BASURA
+import { FaEdit, FaSearch, FaTrash } from "react-icons/fa"; 
 import { GoContainer } from "react-icons/go";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { IoAlertCircleOutline } from "react-icons/io5";
@@ -18,7 +19,7 @@ import Chips from "./Chips";
 
 const ROWS_PER_PAGE = 5;
 
-const DataTable = ({ Data }) => {
+const DataTable = ({ Data = [] }) => {
 
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,6 +43,23 @@ const DataTable = ({ Data }) => {
     return list;
   }, [Data, filterEstado, searchQuery]);
 
+  // 2. LÓGICA DE ELIMINAR
+  const handleDelete = async (id) => {
+    // Confirmación simple del navegador
+    if (!confirm("¿Estás seguro de que deseas eliminar este furgón?")) return;
+
+    try {
+      const res = await fetch(`/api/furgones/${id}`, {
+        method: "DELETE",
+      });
+      router.refresh()
+      window.location.reload()
+    } catch (error) {
+      console.error(error);
+      alert("Error de conexión.");
+    }
+  };
+
   // 🔵 PAGINACIÓN
   const paginatedData = useMemo(() => {
     const start = page * ROWS_PER_PAGE;
@@ -58,7 +76,6 @@ const DataTable = ({ Data }) => {
           label="Buscar por Placa"
           size="small"
           value={searchQuery}
-          // ✅ CORRECCIÓN 1: Reseteamos la página aquí mismo
           onChange={(e) => {
             setSearchQuery(e.target.value);
             setPage(0); 
@@ -77,7 +94,6 @@ const DataTable = ({ Data }) => {
           <Select
             value={filterEstado}
             label="Estado"
-            // ✅ CORRECCIÓN 2: Reseteamos la página aquí mismo
             onChange={(e) => {
               setFilterEstado(e.target.value);
               setPage(0);
@@ -163,12 +179,21 @@ const DataTable = ({ Data }) => {
 
                 <TableCell>{new Date(row.createdAt).toLocaleDateString()}</TableCell>
 
+                {/* 3. COLUMNA DE ACCIONES UNIFICADA */}
                 <TableCell align="center">
-                  <Tooltip title="Editar">
-                    <IconButton color="primary" onClick={() => router.push(`/furgon/editar/${row.id}`)}>
-                      <FaEdit size={18} />
-                    </IconButton>
-                  </Tooltip>
+                  <Box display="flex" justifyContent="center" gap={1}>
+                    <Tooltip title="Editar">
+                      <IconButton color="primary" onClick={() => router.push(`/furgon/editar/${row.id}`)}>
+                        <FaEdit size={18} />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Eliminar">
+                      <IconButton color="error" onClick={() => handleDelete(row.id)}>
+                        <FaTrash size={18} />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
                 </TableCell>
 
               </TableRow>

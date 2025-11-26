@@ -35,3 +35,22 @@ export async function PUT(request, { params }) {
     return NextResponse.json({ error: 'Error updating furgón' }, { status: 500 });
   }
 }
+
+export async function DELETE(request, {params}) {
+    const { id } = await params
+    try {
+        const deleteFurgon = await prisma.furgon.delete({
+            where:{
+                id: Number(id)
+            }
+        })
+        return NextResponse(deleteFurgon)
+    } catch (error) {
+        if (error.code === 'P2025') {
+        return NextResponse.json({ error: 'Furgón no encontrado' }, { status: 404 });
+    }
+
+    console.error(error);
+    return NextResponse.json({ error: 'Error deleting furgón' }, { status: 500 });
+  }
+}
