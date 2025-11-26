@@ -6,7 +6,8 @@ import {
   Box, TextField, Button, Radio, RadioGroup, FormControlLabel, 
   FormControl, FormLabel, Stack, Paper, InputAdornment, Snackbar, Alert 
 } from '@mui/material'
-import { FaSave, FaTruck, FaExclamationTriangle } from "react-icons/fa";
+import { FaSave, FaTruck} from "react-icons/fa";
+import { CiWarning } from "react-icons/ci";
 
 const FormAdd = () => { // Ya no recibe props
   const router = useRouter(); // 👈 INICIALIZAR ROUTER
@@ -48,6 +49,7 @@ const FormAdd = () => { // Ya no recibe props
       // 🚨 AQUÍ ESTÁ LA MAGIA:
       // Esto recarga los Server Components (MainData) y actualiza la tabla automáticamente
       router.refresh(); 
+      window.location.reload()
 
     } catch (error) {
       setMensaje({ open: true, text: error.message || 'Error de conexión', type: 'error' })
@@ -71,6 +73,7 @@ const FormAdd = () => { // Ya no recibe props
               <TextField 
                 label="Número de Placa" variant="outlined" name="placa" fullWidth required
                 value={Data.placa} onChange={handleChange} disabled={loading}
+                placeholder='Numero de Placa'
                 slotProps={{ input: { startAdornment: (<InputAdornment position="start"><FaTruck size={20} color="gray" /></InputAdornment>), }, }}
               />
               {/* ... Resto del formulario ... */}
@@ -83,7 +86,9 @@ const FormAdd = () => { // Ya no recibe props
               </FormControl>
 
              {Data.estado === 'mala' && (
-                <TextField label="Falla" name="falla" fullWidth multiline rows={2} value={Data.falla} onChange={handleChange} />
+                <TextField label="Falla" name="falla" fullWidth multiline rows={2} value={Data.falla} onChange={handleChange} 
+                slotProps={{input:{startAdornment:(<CiWarning color='red' fontSize={'30px'}/>)}}}
+                />
              )}
 
              <Button type="submit" variant="contained" disabled={loading} startIcon={<FaSave />}>

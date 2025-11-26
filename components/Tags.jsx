@@ -1,15 +1,23 @@
+"use client"
 import { GoContainer } from "react-icons/go";
 import { Stack,Box, Typography } from '@mui/material'
-import React from 'react'
-import { prisma } from "@/libs/prisma";
+import { useEffect, useState } from 'react'
 
-const GetData = async() => {
-    const data = await prisma.furgon.findMany();
-    return data;
-}
-const Tags = async () => {
 
-    const data = await GetData();
+const Tags = () => {
+    const [data, setdata] = useState([])
+
+    useEffect(() => {
+    const GetData = async () =>{
+        const res = await fetch('/api/furgones')
+        const data = await res.json()
+        setdata(data)
+    }
+    GetData()
+    }, [])
+    
+
+
     const Total_Furgones = data.length;
     const Furgones_Buenos = data.filter(furgon => furgon.estado === 'buena').length;
     const Furgones_Malos = data.filter(furgon => furgon.estado === 'mala').length;
